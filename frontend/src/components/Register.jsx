@@ -1,9 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { Button, Card, Form } from "react-bootstrap";
 import { IoMdClose } from "react-icons/io";
-import { useDispatch } from "react-redux";
-import { regUser } from "../features/auth/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { regUser, reset } from "../features/auth/authSlice";
+
+import { BarLoader, FadeLoader } from "react-spinners";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+
 const Register = ({ setShowForm }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { user, isLoading, message, isError, isSuccess } = useSelector(
+    (state) => state.auth
+  );
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message);
+    }
+
+    if (isSuccess) {
+      navigate("/home");
+    }
+
+    dispatch(reset());
+  }, [isError, isSuccess]);
+
   let date = new Date();
   let currentYear = date.getFullYear();
   const [disabled, setDisabled] = useState(true);
@@ -48,8 +71,6 @@ const Register = ({ setShowForm }) => {
     "November",
     "December",
   ];
-
-  const dispatch = useDispatch();
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -162,7 +183,7 @@ const Register = ({ setShowForm }) => {
               variant={disabled ? "secondary" : "dark"}
               className="w-100 rounded-pill mt-5 p-3"
             >
-              Next
+              {isLoading ? <BarLoader color="white" /> : "Next"}
             </Button>
           </form>
         </Card>
