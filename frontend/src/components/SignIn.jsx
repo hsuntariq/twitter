@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Card, Form } from "react-bootstrap";
 import { IoMdClose } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
-import { regUser, reset } from "../features/auth/authSlice";
+import { logUser, regUser, reset } from "../features/auth/authSlice";
 
 import { BarLoader, FadeLoader } from "react-spinners";
 import toast from "react-hot-toast";
@@ -53,6 +53,13 @@ const SignIn = ({ setShowForm2 }) => {
 
   const handleClick = (e) => {
     e.preventDefault();
+
+    const data = {
+      email,
+      password,
+    };
+
+    dispatch(logUser(data));
   };
 
   return (

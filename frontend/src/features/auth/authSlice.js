@@ -1,6 +1,6 @@
 // 1.always import these two packages in every slice
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { registerUser } from "./authService";
+import { loginUser, logoutUser, registerUser } from "./authService";
 
 // check for user in the localStorage
 // get the item with the name of user
@@ -32,6 +32,27 @@ export const regUser = createAsyncThunk(
   }
 );
 
+export const logUser = createAsyncThunk(
+  "auth/log-user",
+  async (userData, thunkAPI) => {
+    try {
+      return await loginUser(userData);
+    } catch (error) {
+      const message = error.response.data.message;
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const logout = createAsyncThunk("auth/logout", (_, thunkAPI) => {
+  try {
+    return logoutUser();
+  } catch (error) {
+    const message = error.response.data.message;
+    return thunkAPI.rejectWithValue(message);
+  }
+});
+
 // 3. create your slice to make your state global
 
 export const authSlice = createSlice({
@@ -51,6 +72,7 @@ export const authSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(regUser.rejected, (state, action) => {
+        state.user = null;
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
@@ -59,6 +81,32 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.user = action.payload;
+      })
+      .addCase(logUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(logUser.rejected, (state, action) => {
+        state.user = null;
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      .addCase(logUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.user = action.payload;
+      })
+      .addCase(logout.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(logout.rejected, (state) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = "Error loging out";
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.user = null;
+        state.isSuccess = true;
       });
   },
 });
