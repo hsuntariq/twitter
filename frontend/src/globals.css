@@ -6,3 +6,16 @@
   top: 0;
   z-index: 2222;
 }
+
+body {
+  overflow-x: hidden !important;
+  background-color: #e8ecef;
+}
+.hide-default-input-style {
+  box-shadow: 0 0 0 0 !important;
+  outline-width: none !important;
+  border: none !important;
+}
+::placeholder {
+  font-weight: medium !important;
+}
