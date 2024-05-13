@@ -14,7 +14,7 @@ const authMiddleware = AsyncHandler(async (req, res, next) => {
       //   res.send(decode);
       req.user = await User.findById(decode.id);
       next();
-      console.log(req.user);
+      // console.log(req.user);
     } catch (error) {
       throw new Error("Wrong Token");
     }
