@@ -1,14 +1,28 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { HiOutlineSparkles } from "react-icons/hi2";
 import { Button, Form } from "react-bootstrap";
 import { CiImageOn, CiVideoOn } from "react-icons/ci";
 import { LiaChartBarSolid } from "react-icons/lia";
 import { BsEmojiGrin } from "react-icons/bs";
-
+import { useDispatch, useSelector } from "react-redux";
+import { postReset, uploadTweet } from "../../features/posts/postSlice";
+import { FadeLoader } from "react-spinners";
+import { Audio } from "react-loader-spinner";
+import { toast } from "react-hot-toast";
 const Header = () => {
+  const [caption, setCaption] = useState("");
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [imageLoading, setImageLoading] = useState(false);
+
+  // get the state into the component, using useSelector hook
+  const { postLoading, postError, postSuccess, postMessage } = useSelector(
+    (state) => state.post
+  );
+
+  // get the useDispatch hook to fire/call the functions in the slice
+  const dispatch = useDispatch();
 
   // username:dwtsjgcyf
   // upload_preset:ls8frk5v
@@ -19,6 +33,51 @@ const Header = () => {
     setImagePreview(url);
     setImage(file);
   };
+
+  // upload the image to the cloudinary
+  const uploadImage = async () => {
+    // get data from the input fields
+    const data = new FormData();
+    data.append("file", image);
+    data.append("upload_preset", "ls8frk5v");
+    // request to the cloudinary's api
+    try {
+      setImageLoading(true);
+      const response = await axios.post(
+        "https://api.cloudinary.com/v1_1/dwtsjgcyf/image/upload",
+        data
+      );
+      setImageLoading(false);
+      return response?.data?.url;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleTweet = async () => {
+    const imageData = await uploadImage(image);
+    const tweetData = {
+      caption,
+      content: imageData,
+    };
+
+    dispatch(uploadTweet(tweetData));
+  };
+
+  useEffect(() => {
+    if (postError) {
+      toast.error(postMessage);
+    }
+    if (postSuccess) {
+      toast.success("Tweeted Successfully", {
+        icon: "🐥",
+      });
+      setImagePreview(null);
+      setImage(null);
+      setCaption("");
+    }
+    dispatch(postReset());
+  }, [postError, postSuccess, postMessage, dispatch]);
 
   return (
     <>
@@ -42,12 +101,20 @@ const Header = () => {
             type="text"
             placeholder="Whats happening?"
             className="border-0 hide-default-input-style"
+            value={caption}
+            onChange={(e) => setCaption(e.target.value)}
           />
         </div>
 
         {imagePreview && (
           <div className="w-50 mx-auto d-block" style={{ height: "250px" }}>
-            <img width={"100%"} height={"100%"} src={imagePreview} alt="" />
+            <img
+              width={"100%"}
+              height={"100%"}
+              style={{ objectFit: "contain" }}
+              src={imagePreview}
+              alt=""
+            />
           </div>
         )}
 
@@ -72,10 +139,24 @@ const Header = () => {
             <BsEmojiGrin color="#1CA3F1" cursor="pointer" size={30} />
           </div>
           <Button
+            disabled={imageLoading || postLoading}
+            onClick={handleTweet}
             style={{ background: "#1CA3F1" }}
             className="shadow px-4 py-2 border-0 rounded-pill p-2"
           >
-            Tweet
+            {imageLoading || postLoading ? (
+              <Audio
+                height="30px"
+                width="100px"
+                radius="9"
+                color="#2f4d5e"
+                ariaLabel="three-dots-loading"
+                wrapperStyle
+                wrapperClass
+              />
+            ) : (
+              "Tweet"
+            )}
           </Button>
         </div>
       </div>

@@ -14,3 +14,8 @@ export const postTweet = async (tweetData, token) => {
   );
   return response.data;
 };
+
+export const getAllTweets = async () => {
+  const response = await axios.get(`${base_url}/get-tweets`);
+  return response.data;
+};

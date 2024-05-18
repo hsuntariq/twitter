@@ -16,6 +16,12 @@ const uploadTweet = AsyncHandler(async (req, res) => {
   }
 });
 
+const getAllTweets = AsyncHandler(async (req, res) => {
+  const allTweets = await tweet.find().sort({ createdAt: -1 });
+  res.send(allTweets);
+});
+
 module.exports = {
   uploadTweet,
+  getAllTweets,
 };

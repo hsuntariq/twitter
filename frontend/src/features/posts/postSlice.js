@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { postTweet } from "./postService";
+import { getAllTweets, postTweet } from "./postService";
 
 // define your initialState
 
@@ -16,8 +16,19 @@ export const uploadTweet = createAsyncThunk(
   "post/add-tweet",
   async (tweetData, thunkAPI) => {
     try {
-      const token = thunkAPI.getState().auth.token;
+      const token = thunkAPI.getState().auth.user.token;
       return await postTweet(tweetData, token);
+    } catch (error) {
+      const message = error.response.data.message;
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+export const getTweetData = createAsyncThunk(
+  "post/get-tweet",
+  async (_, thunkAPI) => {
+    try {
+      return await getAllTweets();
     } catch (error) {
       const message = error.response.data.message;
       return thunkAPI.rejectWithValue(message);
@@ -50,6 +61,19 @@ export const postSlice = createSlice({
         state.postLoading = false;
         state.postSuccess = true;
         state.posts.push(action.payload);
+      })
+      .addCase(getTweetData.pending, (state) => {
+        state.postLoading = true;
+      })
+      .addCase(getTweetData.rejected, (state, action) => {
+        state.postLoading = false;
+        state.postError = true;
+        state.message = action.payload;
+      })
+      .addCase(getTweetData.fulfilled, (state, action) => {
+        state.postLoading = false;
+        state.postSuccess = true;
+        state.posts = action.payload;
       });
   },
 });
