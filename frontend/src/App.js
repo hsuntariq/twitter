@@ -6,6 +6,7 @@ import { Toaster } from "react-hot-toast";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import "react-loading-skeleton/dist/skeleton.css";
+import SinglePost from "./pages/posts/SinglePost";
 function App() {
   return (
     <>
@@ -14,6 +15,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<HomePage />} />
+          <Route path="/single-post/:id" element={<SinglePost />} />
         </Routes>
       </Router>
     </>

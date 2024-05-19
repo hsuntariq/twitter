@@ -2,6 +2,7 @@ import axios from "axios";
 const base_url = "http://localhost:3001/api/tweets";
 
 export const postTweet = async (tweetData, token) => {
+  console.log(tweetData);
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,

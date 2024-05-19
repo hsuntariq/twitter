@@ -72,7 +72,7 @@ export const postSlice = createSlice({
       })
       .addCase(getTweetData.fulfilled, (state, action) => {
         state.postLoading = false;
-        state.postSuccess = true;
+        // state.postSuccess = true;
         state.posts = action.payload;
       });
   },

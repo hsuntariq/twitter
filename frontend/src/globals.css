@@ -1,3 +1,10 @@
+::-webkit-scrollbar {
+  width: 0%;
+}
+
+::-webkit-scrollbar-thumb {
+  width: 0;
+}
 .register,
 .SignIn {
   height: 100vh;

@@ -21,6 +21,11 @@ export const loginUser = async (userData) => {
   return response.data;
 };
 
+export const getAllUsers = async () => {
+  const response = await axios.get(`${base_url}/find-all-users`);
+  return response.data;
+};
+
 export const logoutUser = () => {
   localStorage.removeItem("user");
 };

@@ -92,6 +92,13 @@ const findMyProfile = AsyncHandler(async (req, res) => {
   }
 });
 
+// find all users
+
+const findAllUsers = AsyncHandler(async (req, res) => {
+  const allUsers = await User.find();
+  res.send(allUsers);
+});
+
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: "1d",
@@ -102,4 +109,5 @@ module.exports = {
   registerUser,
   loginUser,
   findMyProfile,
+  findAllUsers,
 };
