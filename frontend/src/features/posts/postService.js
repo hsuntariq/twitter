@@ -20,3 +20,23 @@ export const getAllTweets = async () => {
   const response = await axios.get(`${base_url}/get-tweets`);
   return response.data;
 };
+
+export const getComments = async (data) => {
+  const response = await axios.get(`${base_url}/get-comment/${data?.post_id}`);
+  return response.data;
+};
+
+export const makeComment = async (commentData, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const response = await axios.post(
+    `${base_url}/make-comment`,
+    commentData,
+    config
+  );
+  return response.data;
+};

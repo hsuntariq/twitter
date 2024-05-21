@@ -1,5 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getAllTweets, postTweet } from "./postService";
+import {
+  getAllTweets,
+  getComments,
+  makeComment,
+  postTweet,
+} from "./postService";
 
 // define your initialState
 
@@ -10,6 +15,7 @@ const initialState = {
   postSuccess: false,
   postError: false,
   postMessage: false,
+  comments: [],
 };
 
 export const uploadTweet = createAsyncThunk(
@@ -29,6 +35,30 @@ export const getTweetData = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       return await getAllTweets();
+    } catch (error) {
+      const message = error.response.data.message;
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+export const getCommentData = createAsyncThunk(
+  "post/get-comments",
+  async (data, thunkAPI) => {
+    try {
+      console.log(data);
+      return await getComments(data);
+    } catch (error) {
+      const message = error.response.data.message;
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+export const createComment = createAsyncThunk(
+  "post/make-comment",
+  async (commentData, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await makeComment(commentData, token);
     } catch (error) {
       const message = error.response.data.message;
       return thunkAPI.rejectWithValue(message);
@@ -74,6 +104,32 @@ export const postSlice = createSlice({
         state.postLoading = false;
         // state.postSuccess = true;
         state.posts = action.payload;
+      })
+      .addCase(createComment.pending, (state) => {
+        state.postLoading = true;
+      })
+      .addCase(createComment.rejected, (state, action) => {
+        state.postLoading = false;
+        state.postError = true;
+        state.message = action.payload;
+      })
+      .addCase(createComment.fulfilled, (state, action) => {
+        state.postLoading = false;
+        state.postSuccess = true;
+        state.comments.push(action.payload);
+      })
+      .addCase(getCommentData.pending, (state) => {
+        state.postLoading = true;
+      })
+      .addCase(getCommentData.rejected, (state, action) => {
+        state.postLoading = false;
+        state.postError = true;
+        state.message = action.payload;
+      })
+      .addCase(getCommentData.fulfilled, (state, action) => {
+        state.postLoading = false;
+        state.postSuccess = true;
+        state.comments = action.payload;
       });
   },
 });
