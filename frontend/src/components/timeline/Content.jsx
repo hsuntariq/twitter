@@ -3,14 +3,22 @@ import Header from "./Header";
 import Tweets from "./Tweets";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import { getTweetData, postReset } from "../../features/posts/postSlice";
+import {
+  getAllCommentData,
+  getTweetData,
+  postReset,
+} from "../../features/posts/postSlice";
 import TweetLoading from "../Loading/TweetLoading";
 
 const Content = () => {
-  const { postError, postMessage, postLoading } = useSelector(
+  const { postError, postMessage, postLoading, comments } = useSelector(
     (state) => state.post
   );
-  let test = true;
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getAllCommentData());
+  }, [dispatch]);
   return (
     <>
       <div

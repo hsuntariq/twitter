@@ -26,6 +26,11 @@ export const getComments = async (data) => {
   return response.data;
 };
 
+export const getAllComments = async () => {
+  const response = await axios.get(`${base_url}/get-comments`);
+  return response.data;
+};
+
 export const makeComment = async (commentData, token) => {
   const config = {
     headers: {
@@ -36,6 +41,22 @@ export const makeComment = async (commentData, token) => {
   const response = await axios.post(
     `${base_url}/make-comment`,
     commentData,
+    config
+  );
+  return response.data;
+};
+
+export const likeTweet = async (post_id, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  console.log(config);
+
+  const response = await axios.post(
+    `${base_url}/like-tweet/${post_id}`,
+    {},
     config
   );
   return response.data;

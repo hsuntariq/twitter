@@ -1,7 +1,10 @@
 import React from "react";
 import { sidebarData } from "../data/sidebarData";
 import { Button } from "react-bootstrap";
+import { logout } from "../features/auth/authSlice";
+import { useDispatch } from "react-redux";
 const Sidebar = () => {
+  const dispatch = useDispatch();
   return (
     <>
       {sidebarData?.map((item, index) => {
@@ -15,6 +18,7 @@ const Sidebar = () => {
         );
       })}
       <Button
+        onClick={() => dispatch(logout())}
         style={{ background: "#1CA3F1" }}
         className="shadow w-full border-0 rounded-pill p-2"
       >

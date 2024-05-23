@@ -8,13 +8,22 @@ import { Card } from "react-bootstrap";
 import { LuDot } from "react-icons/lu";
 import Skeleton from "react-loading-skeleton";
 import TweetLoading from "../Loading/TweetLoading";
+import { FaHeart } from "react-icons/fa";
+
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import { getTweetData, postReset } from "../../features/posts/postSlice";
+import {
+  getAllCommentData,
+  getTweetData,
+  likePost,
+  postReset,
+} from "../../features/posts/postSlice";
 import { Link } from "react-router-dom";
+import { logout } from "../../features/auth/authSlice";
 
 const Tweets = () => {
-  const { postLoading, postError, posts, postMessage } = useSelector(
+  const { user } = useSelector((state) => state.auth);
+  const { postLoading, comments, postError, posts, postMessage } = useSelector(
     (state) => state.post
   );
 
@@ -96,7 +105,36 @@ const Tweets = () => {
                       <IoChatbubbleOutline size={30} cursor="pointer" />
                     </Link>
                     <AiOutlineRetweet size={30} cursor="pointer" />
-                    <CiHeart size={30} cursor="pointer" />
+                    {post?.likes?.includes(user?._id) ? (
+                      <>
+                        <div className="d-flex gap-1 justify-content-center align-items-center">
+                          <FaHeart
+                            color="red"
+                            onClick={() => dispatch(likePost(post?._id))}
+                            size={25}
+                            cursor="pointer"
+                          />
+                          <h6 className="fw-bolder text-secondary">
+                            {post?.likes?.length}
+                          </h6>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="d-flex gap-1 justify-content-center align-items-center">
+                          <CiHeart
+                            color=""
+                            onClick={() => dispatch(likePost(post?._id))}
+                            size={30}
+                            cursor="pointer"
+                          />
+                          <h6 className="fw-bolder text-secondary">
+                            {post?.likes?.length}
+                          </h6>
+                        </div>
+                      </>
+                    )}
+
                     <CiSaveUp2 size={30} cursor="pointer" />
                   </div>
                 </div>

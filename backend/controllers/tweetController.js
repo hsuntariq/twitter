@@ -49,9 +49,33 @@ const getComment = AsyncHandler(async (req, res) => {
   res.send(findComments);
 });
 
+const getAllComments = AsyncHandler(async (req, res) => {
+  const allComments = await commentModal.find();
+  res.send(allComments);
+});
+
+const likeTweets = AsyncHandler(async (req, res) => {
+  const post_id = req.params.id;
+  const findPost = await tweet.findOne({ _id: post_id });
+  if (!findPost) {
+    res.status(404);
+    throw new Error("Post not found");
+  } else {
+    if (findPost.likes.includes(req.user._id)) {
+      findPost.likes.pull(req.user._id);
+    } else {
+      findPost.likes.push(req.user._id);
+    }
+  }
+  await findPost.save();
+  res.send(findPost);
+});
+
 module.exports = {
   uploadTweet,
   getAllTweets,
   makeComment,
   getComment,
+  getAllComments,
+  likeTweets,
 };

@@ -1,7 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {
+  getAllComments,
   getAllTweets,
   getComments,
+  likeTweet,
   makeComment,
   postTweet,
 } from "./postService";
@@ -16,6 +18,7 @@ const initialState = {
   postError: false,
   postMessage: false,
   comments: [],
+  likeLoading: false,
 };
 
 export const uploadTweet = createAsyncThunk(
@@ -59,6 +62,31 @@ export const createComment = createAsyncThunk(
     try {
       const token = thunkAPI.getState().auth.user.token;
       return await makeComment(commentData, token);
+    } catch (error) {
+      const message = error.response.data.message;
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const likePost = createAsyncThunk(
+  "post/like-post",
+  async (post_id, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await likeTweet(post_id, token);
+    } catch (error) {
+      const message = error.response.data.message;
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const getAllCommentData = createAsyncThunk(
+  "post/get-all-comment",
+  async (_, thunkAPI) => {
+    try {
+      return await getAllComments();
     } catch (error) {
       const message = error.response.data.message;
       return thunkAPI.rejectWithValue(message);
@@ -130,6 +158,37 @@ export const postSlice = createSlice({
         state.postLoading = false;
         state.postSuccess = true;
         state.comments = action.payload;
+      })
+      .addCase(getAllCommentData.pending, (state) => {
+        state.postLoading = true;
+      })
+      .addCase(getAllCommentData.rejected, (state, action) => {
+        state.postLoading = false;
+        state.postError = true;
+        state.message = action.payload;
+      })
+      .addCase(getAllCommentData.fulfilled, (state, action) => {
+        state.postLoading = false;
+        // state.postSuccess = true;
+        state.comments = action.payload;
+      })
+      .addCase(likePost.pending, (state) => {
+        state.likeLoading = true;
+      })
+      .addCase(likePost.rejected, (state, action) => {
+        state.likeLoading = false;
+        state.postError = true;
+        state.message = action.payload;
+      })
+      .addCase(likePost.fulfilled, (state, action) => {
+        state.likeLoading = false;
+
+        state.posts = state?.posts?.map((item, index) => {
+          if (item._id == action.payload._id) {
+            item.likes = action.payload.likes;
+          }
+          return item;
+        });
       });
   },
 });

@@ -3,6 +3,7 @@ import { Col, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { Audio } from "react-loader-spinner";
 import {
   createComment,
   getCommentData,
@@ -165,44 +166,77 @@ const SinglePost = () => {
               </div>
 
               {/* show comments */}
-              {comments?.map((item, index) => {
-                return (
-                  <>
-                    <div className="d-flex gap-3 align-items-center">
-                      <Typography
-                        className="text-capitalize"
-                        sx={{ fontSize: "0.9rem" }}
-                        variant="h6"
-                      >
-                        {findUser?.name}
-                      </Typography>
-                      <p className="text-secondary p-0 m-0">{item?.comment}</p>
-                    </div>
-                  </>
-                );
-              })}
+              <div
+                className="container my-2"
+                style={{ height: "300px", overflowY: "scroll" }}
+              >
+                {comments?.map((item, index) => {
+                  return (
+                    <>
+                      <div className="d-flex gap-3 my-1 align-items-center">
+                        <div className="d-flex gap-3">
+                          <img
+                            width={20}
+                            height={20}
+                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Logo_of_Twitter.svg/584px-Logo_of_Twitter.svg.png"
+                            className="rounded-circle border"
+                            style={{ objectFit: "contain" }}
+                            alt=""
+                          />
+                          <Typography
+                            className="text-capitalize"
+                            sx={{ fontSize: "0.9rem" }}
+                            variant="h6"
+                          >
+                            {findUser?.name}
+                          </Typography>
+                        </div>
+                        <p className="text-secondary p-0 m-0">
+                          {item?.comment}
+                        </p>
+                      </div>
+                    </>
+                  );
+                })}
+              </div>
 
-              <div className="p-2 d-flex align-items-center  position-absolute w-75 bottom-0">
+              <div
+                style={{ width: "33%" }}
+                className="p-2 d-flex align-items-center  position-absolute  bottom-0"
+              >
                 <TextField
                   id="standard-basic"
                   label="Add your comment..."
                   variant="standard"
                   multiline
                   value={comment}
+                  sx={{ width: "100%" }}
                   onChange={(e) => setComment(e.target.value)}
                 />
-                <IoMdSend
-                  onClick={handleComment}
-                  cursor="pointer"
-                  size={15}
-                  style={{
-                    transform: `${
-                      showBtn ? "translateX(0px)" : "translateX(100px)"
-                    } `,
-                    transition: "all 0.2s",
-                    opacity: `${showBtn ? "1" : "0"}`,
-                  }}
-                />
+                {postLoading ? (
+                  <Audio
+                    height="30px"
+                    width="30px"
+                    radius="9"
+                    color="#2f4d5e"
+                    ariaLabel="three-dots-loading"
+                    wrapperStyle
+                    wrapperClass
+                  />
+                ) : (
+                  <IoMdSend
+                    onClick={handleComment}
+                    cursor="pointer"
+                    size={15}
+                    style={{
+                      transform: `${
+                        showBtn ? "translateX(0px)" : "translateX(100px)"
+                      } `,
+                      transition: "all 0.2s",
+                      opacity: `${showBtn ? "1" : "0"}`,
+                    }}
+                  />
+                )}
               </div>
             </Col>
           </Row>
