@@ -25,6 +25,10 @@ export const getAllUsers = async () => {
   const response = await axios.get(`${base_url}/find-all-users`);
   return response.data;
 };
+export const myProfile = async (user_id) => {
+  const response = await axios.get(`${base_url}/my-profile/${user_id}`);
+  return response.data;
+};
 
 export const logoutUser = () => {
   localStorage.removeItem("user");

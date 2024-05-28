@@ -71,6 +71,18 @@ export const getAllUserData = createAsyncThunk(
   }
 );
 
+export const myProfieData = createAsyncThunk(
+  "auth/get-my-profile",
+  async (user_id, thunkAPI) => {
+    try {
+      return await getAllUsers(user_id);
+    } catch (error) {
+      const message = error.response.data.message;
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 // 3. create your slice to make your state global
 
 export const authSlice = createSlice({
@@ -135,6 +147,18 @@ export const authSlice = createSlice({
         state.message = "Error loging out";
       })
       .addCase(getAllUserData.fulfilled, (state, action) => {
+        state.allUsers = action.payload;
+        state.isSuccess = true;
+      })
+      .addCase(myProfieData.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(myProfieData.rejected, (state) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = "Error loging out";
+      })
+      .addCase(myProfieData.fulfilled, (state, action) => {
         state.allUsers = action.payload;
         state.isSuccess = true;
       });

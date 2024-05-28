@@ -6,6 +6,8 @@ import {
   likeTweet,
   makeComment,
   postTweet,
+  saveTweet,
+  shareTweet,
 } from "./postService";
 
 // define your initialState
@@ -13,12 +15,19 @@ import {
 const initialState = {
   posts: [],
   myPosts: [],
+  savedPosts: [],
+  saveLoading: false,
+  saveSuccess: false,
+  saveError: false,
   postLoading: false,
   postSuccess: false,
   postError: false,
   postMessage: false,
   comments: [],
   likeLoading: false,
+  shareLoading: false,
+  shareError: false,
+  shareSuccess: false,
 };
 
 export const uploadTweet = createAsyncThunk(
@@ -82,6 +91,32 @@ export const likePost = createAsyncThunk(
   }
 );
 
+export const sharePost = createAsyncThunk(
+  "post/share-post",
+  async (post_id, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await shareTweet(post_id, token);
+    } catch (error) {
+      const message = error.response.data.message;
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const savePost = createAsyncThunk(
+  "post/save-post",
+  async (saveData, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await saveTweet(saveData, token);
+    } catch (error) {
+      const message = error.response.data.message;
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const getAllCommentData = createAsyncThunk(
   "post/get-all-comment",
   async (_, thunkAPI) => {
@@ -103,6 +138,12 @@ export const postSlice = createSlice({
       state.postError = false;
       state.postSuccess = false;
       state.postMessage = "";
+      state.shareError = false;
+      state.shareLoading = false;
+      state.shareSuccess = false;
+      state.likeLoading = false;
+      state.saveLoading = false;
+      state.saveSuccess = false;
     },
   },
   extraReducers: (builder) => {
@@ -189,6 +230,38 @@ export const postSlice = createSlice({
           }
           return item;
         });
+      })
+      .addCase(sharePost.pending, (state) => {
+        state.shareLoading = true;
+      })
+      .addCase(sharePost.rejected, (state, action) => {
+        state.shareLoading = false;
+        state.shareError = true;
+        state.message = action.payload;
+      })
+      .addCase(sharePost.fulfilled, (state, action) => {
+        state.shareLoading = false;
+        state.shareSuccess = true;
+
+        state.posts = state?.posts?.map((item, index) => {
+          if (item?._id == action?.payload?._id) {
+            item.shares = action?.payload?.shares;
+          }
+          return item;
+        });
+      })
+      .addCase(savePost.pending, (state) => {
+        state.saveLoading = true;
+      })
+      .addCase(savePost.rejected, (state, action) => {
+        state.saveLoading = false;
+        state.saveError = true;
+        state.message = action.payload;
+      })
+      .addCase(savePost.fulfilled, (state, action) => {
+        state.saveLoading = false;
+        state.saveSuccess = true;
+        state.savedPosts.push(action.payload);
       });
   },
 });

@@ -1,6 +1,7 @@
 const AsyncHandler = require("express-async-handler");
 const tweet = require("../models/tweetModel");
 const commentModal = require("../models/commentModel");
+const saveModal = require("../models/saveModal");
 
 const uploadTweet = AsyncHandler(async (req, res) => {
   // get the value from the frontend
@@ -71,6 +72,41 @@ const likeTweets = AsyncHandler(async (req, res) => {
   res.send(findPost);
 });
 
+const shareTweet = AsyncHandler(async (req, res) => {
+  const post_id = req.params.id;
+  const findPost = await tweet.findOne({ _id: post_id });
+  if (!findPost) {
+    res.status(404);
+    throw new Error("Post not found");
+  } else {
+    if (findPost.shares.includes(req.user._id)) {
+      findPost.shares.pull(req.user._id);
+    } else {
+      findPost.shares.push(req.user._id);
+    }
+
+    await findPost.save();
+    res.send(findPost);
+  }
+});
+
+const savePost = AsyncHandler(async (req, res) => {
+  const post_id = req.params.id;
+  const { content } = req.body;
+  const findPost = await tweet.findOne({ _id: post_id });
+  if (!findPost) {
+    res.status(404);
+    throw new Error("Post not found");
+  } else {
+    const savedPost = await saveModal.create({
+      post_id,
+      user_id: req.user._id,
+      content,
+    });
+    res.send(savedPost);
+  }
+});
+
 module.exports = {
   uploadTweet,
   getAllTweets,
@@ -78,4 +114,6 @@ module.exports = {
   getComment,
   getAllComments,
   likeTweets,
+  shareTweet,
+  savePost,
 };

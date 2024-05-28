@@ -35,6 +35,11 @@ const registerUser = AsyncHandler(async (req, res) => {
         dob: newUser.dob,
         password: newUser.password,
         token: generateToken(newUser._id),
+        location: newUser?.location,
+        image: newUser?.image,
+        coverImage: newUser?.coverImage,
+        website: newUser?.website,
+        createdAt: newUser?.createdAt,
       });
     } catch (error) {
       console.log(error);
@@ -73,6 +78,11 @@ const loginUser = AsyncHandler(async (req, res) => {
         dob: findUser.dob,
         password: findUser.password,
         token: generateToken(findUser._id),
+        location: findUser?.location,
+        image: findUser?.image,
+        coverImage: findUser?.coverImage,
+        website: findUser?.website,
+        createdAt: findUser?.createdAt,
       });
     }
   }

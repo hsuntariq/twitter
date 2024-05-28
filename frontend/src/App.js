@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import "react-loading-skeleton/dist/skeleton.css";
 import SinglePost from "./pages/posts/SinglePost";
+import Profile from "./pages/profile/Profile";
 function App() {
   return (
     <>
@@ -16,6 +17,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/single-post/:id" element={<SinglePost />} />
+          <Route path="/profile/:id" element={<Profile />} />
         </Routes>
       </Router>
     </>

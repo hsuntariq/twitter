@@ -21,6 +21,10 @@ const tweetSchema = mongoose.Schema(
       type: Array,
       default: [],
     },
+    shares: {
+      type: Array,
+      default: [],
+    },
   },
   {
     timestamps: true,

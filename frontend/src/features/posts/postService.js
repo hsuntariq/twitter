@@ -52,11 +52,39 @@ export const likeTweet = async (post_id, token) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  console.log(config);
 
   const response = await axios.post(
     `${base_url}/like-tweet/${post_id}`,
     {},
+    config
+  );
+  return response.data;
+};
+
+export const shareTweet = async (post_id, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const response = await axios.post(
+    `${base_url}/share-tweet/${post_id}`,
+    {},
+    config
+  );
+  return response.data;
+};
+export const saveTweet = async (saveData, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const response = await axios.post(
+    `${base_url}/save-tweet/${saveData.post_id}`,
+    { content: saveData.content },
     config
   );
   return response.data;

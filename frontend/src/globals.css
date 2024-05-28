@@ -26,3 +26,12 @@ body {
 ::placeholder {
   font-weight: medium !important;
 }
+
+.side-item {
+  transition: all 0.1s;
+}
+.side-item:hover {
+  background-color: #1ca3f1;
+  color: white;
+  /* padding: 0.3rem; */
+}

@@ -9,23 +9,36 @@ import { LuDot } from "react-icons/lu";
 import Skeleton from "react-loading-skeleton";
 import TweetLoading from "../Loading/TweetLoading";
 import { FaHeart } from "react-icons/fa";
-
+import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
+import { PiTagChevronLight } from "react-icons/pi";
+
 import {
   getAllCommentData,
   getTweetData,
   likePost,
   postReset,
+  savePost,
+  sharePost,
 } from "../../features/posts/postSlice";
 import { Link } from "react-router-dom";
 import { logout } from "../../features/auth/authSlice";
+import { Audio } from "react-loader-spinner";
 
 const Tweets = () => {
   const { user } = useSelector((state) => state.auth);
-  const { postLoading, comments, postError, posts, postMessage } = useSelector(
-    (state) => state.post
-  );
+  const {
+    postLoading,
+    shareLoading,
+    shareSuccess,
+    shareError,
+    comments,
+    postError,
+    posts,
+    postMessage,
+    saveLoading,
+  } = useSelector((state) => state.post);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -35,17 +48,27 @@ const Tweets = () => {
       dispatch(getTweetData());
     }
     dispatch(postReset());
-  }, [dispatch]);
+
+    if (shareError) {
+      toast.error(postMessage);
+    }
+    if (shareSuccess) {
+      toast.success("Retweeted");
+    }
+  }, [dispatch, shareError, shareSuccess]);
 
   return (
     <>
       {posts?.map((post, index) => {
         const checkType = post?.content?.split("/")[4];
+        const myComments = comments.filter((item, index) => {
+          return item?.post_id == post?._id;
+        });
 
         return (
           <>
             <Card
-              className="d-flex  p-4 my-1"
+              className="d-flex  p-4 my-1 "
               style={{
                 borderBottom: "1px solid lightgray",
                 borderTop: "0",
@@ -65,8 +88,8 @@ const Tweets = () => {
                   <div className="d-flex justify-content-between">
                     <div className="d-flex align-items-center">
                       <h6 className="p-0 m-0">Brie</h6>
-                      <p className="text-secondary p-0 m-0">
-                        @sketcky <LuDot /> 3m
+                      <p className="text-secondary p-0 m-0 ">
+                        @sketcky <LuDot /> {moment(post?.createdAt).fromNow()}
                       </p>
                     </div>
                     <RiArrowDropDownLine />
@@ -79,7 +102,8 @@ const Tweets = () => {
                         <>
                           <img
                             width={"100%"}
-                            height={"100%"}
+                            height={"300px"}
+                            style={{ objectFit: "contain" }}
                             className="mb-4"
                             alt=""
                             src={post?.content}
@@ -100,11 +124,44 @@ const Tweets = () => {
                     </>
                   )}
 
-                  <div className="d-flex justify-content-between">
-                    <Link to={`/single-post/${post?._id}`}>
+                  <div className="d-flex   justify-content-between">
+                    <Link
+                      className="d-flex gap-2 align-items-center text-decoration-none text-dark"
+                      to={`/single-post/${post?._id}`}
+                    >
                       <IoChatbubbleOutline size={30} cursor="pointer" />
+                      <h6 className="fw-bolder text-secondary p-0 m-0">
+                        {myComments?.length}
+                      </h6>
                     </Link>
-                    <AiOutlineRetweet size={30} cursor="pointer" />
+                    {shareLoading ? (
+                      <Audio
+                        height="30px"
+                        width="30px"
+                        radius="9"
+                        color="#2f4d5e"
+                        ariaLabel="three-dots-loading"
+                        wrapperStyle
+                        wrapperClass
+                      />
+                    ) : (
+                      <>
+                        {post?.shares.includes(user?._id) ? (
+                          <AiOutlineRetweet
+                            onClick={() => dispatch(sharePost(post?._id))}
+                            size={30}
+                            cursor="pointer"
+                            color="green"
+                          />
+                        ) : (
+                          <AiOutlineRetweet
+                            onClick={() => dispatch(sharePost(post?._id))}
+                            size={30}
+                            cursor="pointer"
+                          />
+                        )}
+                      </>
+                    )}
                     {post?.likes?.includes(user?._id) ? (
                       <>
                         <div className="d-flex gap-1 justify-content-center align-items-center">
@@ -114,7 +171,7 @@ const Tweets = () => {
                             size={25}
                             cursor="pointer"
                           />
-                          <h6 className="fw-bolder text-secondary">
+                          <h6 className="fw-bolder text-secondary p-0 m-0">
                             {post?.likes?.length}
                           </h6>
                         </div>
@@ -135,7 +192,31 @@ const Tweets = () => {
                       </>
                     )}
 
-                    <CiSaveUp2 size={30} cursor="pointer" />
+                    {saveLoading ? (
+                      <Audio
+                        height="30px"
+                        width="30px"
+                        radius="9"
+                        color="#2f4d5e"
+                        ariaLabel="three-dots-loading"
+                        wrapperStyle
+                        wrapperClass
+                      />
+                    ) : (
+                      <PiTagChevronLight
+                        style={{ transform: "rotate(90deg)" }}
+                        onClick={() =>
+                          dispatch(
+                            savePost({
+                              post_id: post?._id,
+                              content: post?.content,
+                            })
+                          )
+                        }
+                        size={30}
+                        cursor="pointer"
+                      />
+                    )}
                   </div>
                 </div>
               </div>
