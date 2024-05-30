@@ -23,11 +23,11 @@ import {
   sharePost,
 } from "../../features/posts/postSlice";
 import { Link } from "react-router-dom";
-import { logout } from "../../features/auth/authSlice";
+import { getAllUserData, logout } from "../../features/auth/authSlice";
 import { Audio } from "react-loader-spinner";
 
 const Tweets = () => {
-  const { user } = useSelector((state) => state.auth);
+  const { user, allUsers } = useSelector((state) => state.auth);
   const {
     postLoading,
     shareLoading,
@@ -57,9 +57,16 @@ const Tweets = () => {
     }
   }, [dispatch, shareError, shareSuccess]);
 
+  useEffect(() => {
+    dispatch(getAllUserData());
+  }, [dispatch]);
+
   return (
     <>
       {posts?.map((post, index) => {
+        const findUser = allUsers.find((item, index) => {
+          return item?._id == post?.user;
+        });
         const checkType = post?.content?.split("/")[4];
         const myComments = comments.filter((item, index) => {
           return item?.post_id == post?._id;
@@ -81,15 +88,17 @@ const Tweets = () => {
                   width={40}
                   height={40}
                   className="rounded-circle"
-                  src="https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg"
+                  style={{ objectFit: "contain", border: "1px solid #1CA3F1" }}
+                  src={findUser?.image}
                   alt=""
                 />
                 <div className="d-flex flex-column w-100 ">
                   <div className="d-flex justify-content-between">
                     <div className="d-flex align-items-center">
-                      <h6 className="p-0 m-0">Brie</h6>
-                      <p className="text-secondary p-0 m-0 ">
-                        @sketcky <LuDot /> {moment(post?.createdAt).fromNow()}
+                      <h6 className="p-0 m-0">{findUser?.name}</h6>
+                      <p className="text-secondary mx-3 p-0 m-0 ">
+                        {findUser?.email}
+                        <LuDot /> {moment(post?.createdAt).fromNow()}
                       </p>
                     </div>
                     <RiArrowDropDownLine />

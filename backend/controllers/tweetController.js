@@ -107,6 +107,17 @@ const savePost = AsyncHandler(async (req, res) => {
   }
 });
 
+const getMyPosts = AsyncHandler(async (req, res) => {
+  const findPosts = await tweet
+    .find({ user: req.user._id })
+    .sort({ createdAt: -1 });
+  if (!findPosts) {
+    throw new Error("No Posts yet");
+  } else {
+    res.send(findPosts);
+  }
+});
+
 module.exports = {
   uploadTweet,
   getAllTweets,
@@ -116,4 +127,5 @@ module.exports = {
   likeTweets,
   shareTweet,
   savePost,
+  getMyPosts,
 };

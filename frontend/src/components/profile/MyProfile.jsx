@@ -1,12 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ProfileHeader from "./ProfileHeader";
 import { useSelector } from "react-redux";
 import { BsThreeDots } from "react-icons/bs";
 import { Button } from "@mui/material";
 import { RxDot } from "react-icons/rx";
 import UserInfo from "./UserInfo";
+import UserTweets from "./UserTweets";
 
 const MyProfile = () => {
+  const [check, setCheck] = useState("");
   const { user } = useSelector((state) => state.auth);
   return (
     <>
@@ -58,6 +60,56 @@ const MyProfile = () => {
       </div>
 
       <UserInfo />
+      <div className="d-flex text-capitalize justify-content-around mt-5 ">
+        <h5
+          onClick={() => setCheck("tweets")}
+          style={{
+            color: `${check == "tweets" ? "#1CA3F1" : "#000"}`,
+            borderBottom: `${check == "tweets" ? "2px solid #1CA3F1" : "#000"}`,
+            cursor: "pointer",
+          }}
+          className=""
+        >
+          tweets
+        </h5>
+        <h5
+          onClick={() => setCheck("replies")}
+          style={{
+            color: `${check == "replies" ? "#1CA3F1" : "#000"}`,
+            borderBottom: `${
+              check == "replies" ? "2px solid #1CA3F1" : "#000"
+            }`,
+            cursor: "pointer",
+          }}
+          className=""
+        >
+          Tweets and replies
+        </h5>
+        <h5
+          onClick={() => setCheck("media")}
+          style={{
+            color: `${check == "media" ? "#1CA3F1" : "#000"}`,
+            borderBottom: `${check == "media" ? "2px solid #1CA3F1" : "#000"}`,
+            cursor: "pointer",
+          }}
+          className=""
+        >
+          media{" "}
+        </h5>
+        <h5
+          onClick={() => setCheck("likes")}
+          style={{
+            color: `${check == "likes" ? "#1CA3F1" : "#000"}`,
+            borderBottom: `${check == "likes" ? "2px solid #1CA3F1" : "#000"}`,
+            cursor: "pointer",
+          }}
+          className=""
+        >
+          likes
+        </h5>
+      </div>
+
+      <UserTweets check={check} />
     </>
   );
 };

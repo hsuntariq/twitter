@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {
+  findMyPosts,
   getAllComments,
   getAllTweets,
   getComments,
@@ -122,6 +123,18 @@ export const getAllCommentData = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       return await getAllComments();
+    } catch (error) {
+      const message = error.response.data.message;
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+export const findMyPostsData = createAsyncThunk(
+  "post/get-my-posts",
+  async (_, thunkAPI) => {
+    const token = thunkAPI.getState().auth.user.token;
+    try {
+      return await findMyPosts(_, token);
     } catch (error) {
       const message = error.response.data.message;
       return thunkAPI.rejectWithValue(message);
@@ -262,6 +275,19 @@ export const postSlice = createSlice({
         state.saveLoading = false;
         state.saveSuccess = true;
         state.savedPosts.push(action.payload);
+      })
+      .addCase(findMyPostsData.pending, (state) => {
+        state.postLoading = true;
+      })
+      .addCase(findMyPostsData.rejected, (state, action) => {
+        state.postLoading = false;
+        state.postError = true;
+        state.message = action.payload;
+      })
+      .addCase(findMyPostsData.fulfilled, (state, action) => {
+        state.postLoading = false;
+        state.postSuccess = true;
+        state.myPosts = action.payload;
       });
   },
 });

@@ -18,22 +18,31 @@ const UserInfo = () => {
         <div className="bio">
           <p>{user?.bio}</p>
         </div>
-        <div className="text-secondary d-flex gap-3">
-          <div className="d-flex fs-6 gap-1 align-items-center">
-            <CiLocationOn />
-            {user?.location}
+        <div className="text-secondary row">
+          <div className="col-md-4 col-lg-6 col-xl-3">
+            <div className="d-flex fs-6 gap-1 align-items-center">
+              <CiLocationOn />
+              {user?.location}
+            </div>
           </div>
-          <div className="d-flex fs-6 gap-1 align-items-center">
-            <FaLink />
-            {user?.website ? user?.website : "No website"}
+
+          <div className="col-md-4 col-lg-6 col-xl-3">
+            <div className="d-flex fs-6 gap-1 align-items-center">
+              <FaLink />
+              {user?.website ? user?.website : "No website"}
+            </div>
           </div>
-          <div className="d-flex fs-6 gap-1 align-items-center">
-            <IoBalloonOutline />
-            Born {user?.dob}
+          <div className="col-md-4 col-lg-6 col-xl-3">
+            <div className="d-flex fs-6 gap-1 align-items-center">
+              <IoBalloonOutline />
+              Born {user?.dob}
+            </div>
           </div>
-          <div className="d-flex fs-6 gap-1 align-items-center">
-            <SlCalender />
-            Joined {moment(user?.createdAt).format("MMM YYYY")}
+          <div className="col-md-4 col-lg-6 col-xl-3">
+            <div className="d-flex fs-6 gap-1 align-items-center">
+              <SlCalender />
+              Joined {moment(user?.createdAt).format("MMM YYYY")}
+            </div>
           </div>
         </div>
       </div>

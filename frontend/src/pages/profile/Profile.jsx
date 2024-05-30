@@ -19,7 +19,12 @@ const Profile = () => {
         </Col>
         <Col
           className="p-0 m-0"
-          style={{ borderRight: "1px solid lightgray" }}
+          style={{
+            borderRight: "1px solid lightgray",
+            height: "98vh",
+            overflowY: "scroll",
+            background: "white",
+          }}
           xl={7}
           lg={6}
         >

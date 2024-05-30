@@ -89,3 +89,14 @@ export const saveTweet = async (saveData, token) => {
   );
   return response.data;
 };
+export const findMyPosts = async (_, token) => {
+  console.log(token);
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const response = await axios.get(`${base_url}/get-my-posts`, config);
+  return response.data;
+};
