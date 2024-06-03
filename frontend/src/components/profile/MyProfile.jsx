@@ -6,10 +6,17 @@ import { Button } from "@mui/material";
 import { RxDot } from "react-icons/rx";
 import UserInfo from "./UserInfo";
 import UserTweets from "./UserTweets";
+import { useParams } from "react-router-dom";
 
 const MyProfile = () => {
-  const [check, setCheck] = useState("");
-  const { user } = useSelector((state) => state.auth);
+  const [check, setCheck] = useState("tweets");
+  const { user, allUsers } = useSelector((state) => state.auth);
+  const { id } = useParams();
+
+  const findUser = allUsers?.find((item, index) => {
+    return item?._id == id;
+  });
+
   return (
     <>
       <ProfileHeader />
@@ -18,7 +25,7 @@ const MyProfile = () => {
           width={"100%"}
           height={300}
           style={{ objectFit: "cover" }}
-          src={user?.coverImage}
+          src={findUser?.coverImage}
           alt="cover image"
         />
         <img
@@ -29,7 +36,7 @@ const MyProfile = () => {
             bottom: "-20%",
             left: "2%",
           }}
-          src={user?.image}
+          src={findUser?.image}
           alt="profile image"
           className="position-absolute p-3 bg-white rounded-circle"
         />
@@ -59,7 +66,7 @@ const MyProfile = () => {
         </Button>
       </div>
 
-      <UserInfo />
+      <UserInfo findUser={findUser} />
       <div className="d-flex text-capitalize justify-content-around mt-5 ">
         <h5
           onClick={() => setCheck("tweets")}

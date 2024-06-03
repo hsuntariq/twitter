@@ -131,10 +131,9 @@ export const getAllCommentData = createAsyncThunk(
 );
 export const findMyPostsData = createAsyncThunk(
   "post/get-my-posts",
-  async (_, thunkAPI) => {
-    const token = thunkAPI.getState().auth.user.token;
+  async (user_id, thunkAPI) => {
     try {
-      return await findMyPosts(_, token);
+      return await findMyPosts(user_id);
     } catch (error) {
       const message = error.response.data.message;
       return thunkAPI.rejectWithValue(message);

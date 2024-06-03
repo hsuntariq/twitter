@@ -36,7 +36,12 @@ const HomePage = () => {
         >
           <Content />
         </Col>
-        <Col className="p-0 m-0" xl={3} lg={3}>
+        <Col
+          className="p-0 m-0"
+          xl={3}
+          lg={3}
+          style={{ height: "99.9vh", overflowY: "scroll" }}
+        >
           <Trends />
         </Col>
       </Row>

@@ -21,5 +21,5 @@ router.post("/make-comment", authMiddleware, makeComment);
 router.post("/like-tweet/:id", authMiddleware, likeTweets);
 router.post("/share-tweet/:id", authMiddleware, shareTweet);
 router.post("/save-tweet/:id", authMiddleware, savePost);
-router.get("/get-my-posts", authMiddleware, getMyPosts);
+router.get("/get-my-posts/:id", getMyPosts);
 module.exports = router;

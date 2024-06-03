@@ -108,9 +108,8 @@ const savePost = AsyncHandler(async (req, res) => {
 });
 
 const getMyPosts = AsyncHandler(async (req, res) => {
-  const findPosts = await tweet
-    .find({ user: req.user._id })
-    .sort({ createdAt: -1 });
+  const user_id = req.params.id;
+  const findPosts = await tweet.find({ user: user_id }).sort({ createdAt: -1 });
   if (!findPosts) {
     throw new Error("No Posts yet");
   } else {
