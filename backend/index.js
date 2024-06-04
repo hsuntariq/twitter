@@ -26,7 +26,8 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   console.log(`User connected on id:${socket.id.cyan}`);
 
-  socket.on("message", (data) => {
+  socket.on("sent_message", (data) => {
+    console.log(data);
     socket.broadcast.emit("received_message", data);
   });
 });

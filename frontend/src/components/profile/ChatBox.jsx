@@ -9,6 +9,8 @@ import { IoSend } from "react-icons/io5";
 import { IoMdSend } from "react-icons/io";
 
 import io from "socket.io-client";
+import { useSelector } from "react-redux";
+import { PiArrowFatLinesLeftLight } from "react-icons/pi";
 const socket = io.connect("http://localhost:3001");
 
 export default function ChatBox({
@@ -17,19 +19,63 @@ export default function ChatBox({
   open,
   vertical,
   horizontal,
-  user,
+  selectedUser,
+  message,
+  setMessage,
 }) {
-  const [message, setMessage] = useState("");
+  const { user } = useSelector((state) => state.auth);
+
+  const [sentMessages, setSentMessages] = useState([]);
+  const [receivedMessages, setReceivedMessages] = useState([]);
+
   const [showBtn, setShowBtn] = useState(false);
 
   const handleMessage = () => {
-    socket.emit("message", message);
+    socket.emit("sent_message", {
+      message,
+      message_from: user?._id,
+      message_to: selectedUser?._id,
+    });
+    setSentMessages([
+      ...sentMessages,
+      {
+        message,
+        message_from: user?._id,
+        message_to: selectedUser?._id,
+        time: Date.now(),
+        sent: true,
+      },
+    ]);
+    setMessage("");
   };
 
   useEffect(() => {
     socket.on("received_message", (data) => {
-      alert(data);
+      if (data?.message_to == user?._id) {
+        setReceivedMessages([
+          ...receivedMessages,
+          {
+            message: data?.message,
+            message_from: data.message_from,
+            message_to: data?.message_to,
+            time: Date.now(),
+            sent: false,
+          },
+        ]);
+      }
     });
+  });
+
+  const allMessages = [...sentMessages, ...receivedMessages].sort((a, b) => {
+    return a.time - b.time;
+  });
+
+  const myMessages = allMessages.filter((item, index) => {
+    return (
+      (item.message_from == user?._id &&
+        item.message_to == selectedUser?._id) ||
+      (item.message_from == selectedUser?._id && user?._id)
+    );
   });
 
   useEffect(() => {
@@ -55,13 +101,13 @@ export default function ChatBox({
                 height={50}
                 className="rounded-circle"
                 style={{ border: "1px solid #1CA3F1", objectFit: "contain" }}
-                src={user?.image}
+                src={selectedUser?.image}
                 alt=""
               />
               <div className="d-flex flex-column ">
-                <Typography variant="h6">{user?.name}</Typography>
+                <Typography variant="h6">{selectedUser?.name}</Typography>
                 <Typography variant="p" className="text-secondary">
-                  {user?.email}
+                  {selectedUser?.email}
                 </Typography>
               </div>
             </div>
@@ -69,7 +115,37 @@ export default function ChatBox({
           <div
             style={{ height: "50vh", width: "20vw", overflowY: "scroll" }}
             className="message-panel"
-          ></div>
+          >
+            {myMessages?.map((msg, index) => {
+              return (
+                <>
+                  {msg.sent ? (
+                    <div
+                      className="bg-success text-white my-1 ms-auto rounded-pill p-1 px-3 "
+                      style={{
+                        wordWrap: "break-word",
+                        maxWidth: "75%",
+                        width: "max-content",
+                      }}
+                    >
+                      <Typography variant="p">{msg?.message}</Typography>
+                    </div>
+                  ) : (
+                    <div
+                      className="bg-secondary text-white my-1 rounded-pill p-1 px-3 "
+                      style={{
+                        wordWrap: "break-word",
+                        maxWidth: "75%",
+                        width: "max-content",
+                      }}
+                    >
+                      <Typography variant="p">{msg?.message}</Typography>
+                    </div>
+                  )}
+                </>
+              );
+            })}
+          </div>
           <div className="d-flex justify-content-between align-items-center px-3">
             <TextField
               id="standard-basic"

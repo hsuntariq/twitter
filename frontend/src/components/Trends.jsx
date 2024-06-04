@@ -13,6 +13,7 @@ const Trends = () => {
     horizontal: "center",
     selectedUser: null,
   });
+  const [message, setMessage] = useState("");
 
   const handleClick = (newState, user) => () => {
     setState({ ...state, ...newState, open: true, selectedUser: user });
@@ -20,6 +21,7 @@ const Trends = () => {
 
   const handleClose = () => {
     setState({ ...state, open: false, selectedUser: null });
+    setMessage("");
   };
 
   const { vertical, horizontal, open, selectedUser } = state;
@@ -32,7 +34,9 @@ const Trends = () => {
         open={open}
         vertical={vertical}
         horizontal={horizontal}
-        user={selectedUser}
+        selectedUser={selectedUser}
+        message={message}
+        setMessage={setMessage}
       />
       {allUsers?.map((item, index) => (
         <Card key={index} className="p-2 my-1 mx-auto rounded-0">
