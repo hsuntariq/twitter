@@ -8,6 +8,7 @@ import HomePage from "./pages/HomePage";
 import "react-loading-skeleton/dist/skeleton.css";
 import SinglePost from "./pages/posts/SinglePost";
 import Profile from "./pages/profile/Profile";
+import VideoCall from "./components/videoCall/VideoCall";
 function App() {
   return (
     <>
@@ -18,6 +19,10 @@ function App() {
           <Route path="/home" element={<HomePage />} />
           <Route path="/single-post/:id" element={<SinglePost />} />
           <Route path="/profile/:id" element={<Profile />} />
+          <Route
+            path="/video-call/:caller_id/:receiver_id"
+            element={<VideoCall />}
+          />
         </Routes>
       </Router>
     </>

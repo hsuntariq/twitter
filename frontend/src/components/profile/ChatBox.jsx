@@ -7,10 +7,12 @@ import { Card, CardHeader } from "react-bootstrap";
 import { Input, TextField, Typography } from "@mui/material";
 import { IoSend } from "react-icons/io5";
 import { IoMdSend } from "react-icons/io";
+import { FaVideo } from "react-icons/fa";
 
 import io from "socket.io-client";
 import { useSelector } from "react-redux";
 import { PiArrowFatLinesLeftLight } from "react-icons/pi";
+import { useNavigate } from "react-router-dom";
 const socket = io.connect("http://localhost:3001");
 
 export default function ChatBox({
@@ -24,7 +26,7 @@ export default function ChatBox({
   setMessage,
 }) {
   const { user } = useSelector((state) => state.auth);
-
+  const navigate = useNavigate();
   const [sentMessages, setSentMessages] = useState([]);
   const [receivedMessages, setReceivedMessages] = useState([]);
 
@@ -85,6 +87,13 @@ export default function ChatBox({
       setShowBtn(false);
     }
   }, [message]);
+
+  // handle video call
+
+  const onVideoCall = () => {
+    window.open(`video-call/${user?._id}/${selectedUser?._id}`, "_blank");
+  };
+
   return (
     <Box sx={{ width: 500 }}>
       <Snackbar
@@ -95,20 +104,26 @@ export default function ChatBox({
       >
         <Card>
           <CardHeader>
-            <div className="d-flex align-items-center gap-3">
-              <img
-                width={50}
-                height={50}
-                className="rounded-circle"
-                style={{ border: "1px solid #1CA3F1", objectFit: "contain" }}
-                src={selectedUser?.image}
-                alt=""
-              />
-              <div className="d-flex flex-column ">
-                <Typography variant="h6">{selectedUser?.name}</Typography>
-                <Typography variant="p" className="text-secondary">
-                  {selectedUser?.email}
-                </Typography>
+            <div className="d-flex justify-content-between align-items-center">
+              <div className="d-flex align-items-center gap-3">
+                <img
+                  width={50}
+                  height={50}
+                  className="rounded-circle"
+                  style={{ border: "1px solid #1CA3F1", objectFit: "contain" }}
+                  src={selectedUser?.image}
+                  alt=""
+                />
+                <div className="d-flex flex-column ">
+                  <Typography variant="h6">{selectedUser?.name}</Typography>
+                  <Typography variant="p" className="text-secondary">
+                    {selectedUser?.email}
+                  </Typography>
+                </div>
+              </div>
+
+              <div className="icons">
+                <FaVideo onClick={onVideoCall} size={30} cursor="pointer" />
               </div>
             </div>
           </CardHeader>

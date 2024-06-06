@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Button, Col, Container, Row } from "react-bootstrap";
@@ -7,9 +7,14 @@ import { ContainerFluid } from "react-bootstrap";
 import Sidebar from "../components/Sidebar";
 import Trends from "../components/Trends";
 import Content from "../components/timeline/Content";
+import io from "socket.io-client";
+import IncomingCall from "../components/videoCall/IncomingCall";
+const socket = io.connect("http://localhost:3001");
 const HomePage = () => {
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  const [myData, setMyData] = useState(null);
+  const [calling, setCalling] = useState(false);
   const dispatch = useDispatch();
   useEffect(() => {
     if (!user) {
@@ -17,8 +22,25 @@ const HomePage = () => {
     }
   }, [navigate]);
 
+  useEffect(() => {
+    socket.on("incoming_call", (data) => {
+      if (data?.receiver_id == user?._id) {
+        setCalling(true);
+        setMyData(data);
+      }
+    });
+  });
+  useEffect(() => {
+    socket.on("reject_call", (data) => {
+      if (data?.rejected_id == user?._id) {
+        alert(`${data?.rejector_id} has rejected your call`);
+      }
+    });
+  });
+
   return (
     <>
+      {calling && <IncomingCall setCalling={setCalling} myData={myData} />}
       <Row>
         <Col
           className="d-flex bg-white p-0 m-0 flex-column gap-5 p-5"

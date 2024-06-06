@@ -30,6 +30,18 @@ io.on("connection", (socket) => {
     console.log(data);
     socket.broadcast.emit("received_message", data);
   });
+
+  socket.on("video_call", (data) => {
+    socket.broadcast.emit("incoming_call", data);
+  });
+
+  socket.on("call_rejected", (data) => {
+    socket.broadcast.emit("reject_call", data);
+  });
+  socket.on("call_received", (data) => {
+    console.log(data);
+    socket.broadcast.emit("receive_call", data);
+  });
 });
 
 connectDB();
